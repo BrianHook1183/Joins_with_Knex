@@ -3,6 +3,7 @@ const knex = require("../db/connection");
 const tableName = "restaurants";
 
 function averageRating() {
+  // solution to previous assignment
   return knex(tableName).avg("rating").as("average").first();
 }
 
@@ -21,12 +22,39 @@ function destroy(restaurant_id) {
 }
 
 function list() {
-  return knex(tableName).select("*");
+  // my solution
+  return knex("restaurants as r")
+    .join("owners as o", "o.owner_id", "r.owner_id")
+    .select("r.restaurant_name", "o.owner_name", "o.email")
+    .orderBy("o.owner_name");
 }
 
 function listAverageRatingByOwner() {
-  // your solution here
-  return [];
+  //* sample result
+  /* 
+  {
+  "data": [
+    {
+      "avg": 3.8200000000000003,
+      "owner_name": "Amata Frenzel;"
+    },
+    {
+      "avg": 2.25,
+      "owner_name": "Curtice Grollmann"
+    },
+    {
+      "avg": 2.45,
+      "owner_name": "Daffy Furzer"
+    }
+  ]
+}
+  */
+  // my solution
+  return knex("restaurants as r")
+    .join("owners as o", "o.owner_id", "r.owner_id")
+    .avg("r.rating")
+    .select("o.owner_name")
+    .groupBy("o.owner_name");
 }
 
 function read(restaurant_id) {
@@ -34,6 +62,7 @@ function read(restaurant_id) {
 }
 
 function readHighestRated() {
+  // solution to previous assignment
   return knex(tableName)
     .max("rating")
     .select("*")
